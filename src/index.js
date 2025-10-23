@@ -1,27 +1,41 @@
-import "./styles.css";
+import Todo from "./todo_constructor"
+import todoManager from "./todo_manager";
+import Project from "./project_constructor";
+import './styles.css'
 
-import pageLoad from './page-load';
-import { homeContent } from './home';
-import { menuContent } from './menu';
-import { aboutContent } from './about';
 
-// function removeAllChildNodes(parent) {
-//   while (parent.firstChild) {
-//     parent.removeChild(parent.firstChild);
-//   }
-// }
+const change_bulb = new Todo(
+  "Change light bulb",
+  "34w warm",
+  "2025-10-20",
+  {
+    priority: "high",
+    project: "chores",
+    checklist: ["go to store", "verify size", "buy bulb"],
+    cost: "$20",
+    energy: "draining",
+  }
+);
 
-// Initial render
-pageLoad();
+const clean_carpet = new Todo(
+  "Clean carpet",
+  "",
+  "2025-10-20",
+  {
+    priority: "high",
+    project: "chores",
+    checklist: ["Recharge vacuum", "Discharge waste"],
+  }
+);
 
-const content = document.querySelector('#content');
-const navTabs = document.querySelector('nav');
+const chores = new Project("Chores");
 
-navTabs.addEventListener('click', (e) => {
-  const btnClick = e.target.innerText;
-//   removeAllChildNodes(content);
+todoManager.add(chores, change_bulb)
+todoManager.add(chores, clean_carpet)
 
-  if (btnClick === 'Home') homeContent();
-  else if (btnClick === 'Menu') menuContent();
-  else if (btnClick === 'About') aboutContent();
-});
+
+clean_carpet.toggleComplete();
+todoManager.remove(chores, clean_carpet.id)
+
+console.table(chores);
+// console.log(todo2);
