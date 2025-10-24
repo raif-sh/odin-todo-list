@@ -1,4 +1,7 @@
 const todoManager = {
+    newProject(name) {
+        return new Project(name);
+    },
     add(project = "Inbox", todo) {
         return project.todos.push(todo);
     },
@@ -11,6 +14,15 @@ const todoManager = {
 
         return project.todos = project.todos.filter(item => item.id !== todoId);
     },
+    updateCompleted(project, todoId) {
+        const index = project.todos.findIndex(item => item.id === todoId);
+        if (index === -1) {
+            console.warn(`Todo with id "${todoId}" not found.`);
+            return false;
+        }
+        
+        return project.todos[index].completed = !project.todos[index].completed;
+    }
 }
 
 export default todoManager;

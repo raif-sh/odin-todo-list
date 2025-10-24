@@ -1,9 +1,11 @@
-import Todo from "./todo_constructor"
+import Todo from "./modules/todo_constructor"
 import todoManager from "./todo_manager";
-import Project from "./project_constructor";
+import Project from "./modules/project_constructor";
+import { btn } from "./dom_ops";
+import { getCurrentProjectHeader } from "./modules/dom_projects";
 import './styles.css'
 
-
+btn()
 const change_bulb = new Todo(
   "Change light bulb",
   "34w warm",
@@ -33,9 +35,8 @@ const chores = new Project("Chores");
 todoManager.add(chores, change_bulb)
 todoManager.add(chores, clean_carpet)
 
-
-clean_carpet.toggleComplete();
-todoManager.remove(chores, clean_carpet.id)
+todoManager.updateCompleted(chores, clean_carpet.id);
+// todoManager.remove(chores, clean_carpet.id)
 
 console.table(chores);
 // console.log(todo2);

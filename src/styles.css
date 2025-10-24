@@ -10,3 +10,14 @@ html {
   background-color: rgb(35, 35, 35);
   color: #dfdfdf;
 }
+
+li {
+  margin-top: 10px;
+  border-top: 1px solid gray;
+  color: gray;
+}
+
+li p {
+  font: bold;
+  color: white;
+}
