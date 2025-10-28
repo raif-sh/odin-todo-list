@@ -21,3 +21,21 @@ li p {
   font: bold;
   color: white;
 }
+
+dialog {
+    width: clamp(300px, 50%, 800px);
+    border: none;
+    border-radius: 8px;
+    background: #fffdf9;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+.dialog-container{
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+dialog::backdrop {
+    background: rgba(90, 70, 52, 0.3);
+}
