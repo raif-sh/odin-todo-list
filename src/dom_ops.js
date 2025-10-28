@@ -49,11 +49,13 @@ function renderTodos(project) {
             const newDueDate = document.createElement("subtitle");
             newDueDate.textContent = todo.dueDate;
     
-            const newPriority = document.createElement("h2");
+            const newPriority = document.createElement("span");
             newPriority.textContent = todo.priority;
+            
+            const newCompleted = document.createElement("button");
+            newCompleted.textContent = "Mark completed"
     
-    
-            newListItem.append(newTitle, newDesc, newDueDate, newPriority)
+            newListItem.append(newTitle, newDesc, newDueDate, newPriority, newCompleted)
             content.appendChild(newListItem);
         });
 
@@ -67,6 +69,9 @@ function btn() {
         // get current project value
         const currentProjectObj = todoManager.findProject(getCurrentProjectHeader.textContent)
 
+        if (getTitle.value === '') {
+            return;
+        }
 
         const newTodo = new Todo(
             getTitle.value,
@@ -74,6 +79,11 @@ function btn() {
             getDueDate.value,
             getPriority.value,
         );
+
+        getTitle.value = "";
+        getDesc.value = "";
+        getDueDate.value = "";
+        getPriority.value = "low";
 
         todoManager.add(currentProjectObj, newTodo);
         renderTodos(currentProjectObj);
@@ -85,6 +95,12 @@ function createNewProject(e) {
     e.preventDefault()
 
     const projectName = getNewProjectName.value;
+
+    if (projectName === '') {
+        return alert("Project name can't be blank")
+    } else if (projectName.length < 3) {
+        return alert("Project name should be atleast 3 characters long")
+    }
 
     const newProject = todoManager.newProject(projectName)
 
