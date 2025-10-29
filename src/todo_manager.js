@@ -1,6 +1,6 @@
 import Project from "./modules/project_constructor";
 
-const allProjects = [];
+let allProjects = [];
 
 const todoManager = {
     newProject(name) {

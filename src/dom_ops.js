@@ -2,20 +2,32 @@ import { saveTodoButton, content, getTitle, getDesc, getDueDate, getPriority } f
 import Todo from "./modules/todo_constructor"
 import { todoManager, allProjects } from "./todo_manager";
 import { format, formatDistanceToNow, compareAsc } from "date-fns";
+import storageManager from "./storage";
 
 
-// Initialize default project
-const inbox = todoManager.newProject("Inbox");
-const chores = todoManager.newProject("Chores");
+// Fetch data from localstorage
+if (storageManager.read("localData") === null) {
+    // Initialize default project
+    const inbox = todoManager.newProject("Inbox");
+    const chores = todoManager.newProject("Chores");
+    allProjects.push(inbox);
+    allProjects.push(chores);
+    console.log("saving all projects")
+    console.table(allProjects)
+    storageManager.save("localData", allProjects)
+} else {
+    // sync existing data to allProjects
+    let tempStorage = storageManager.read("localData");
+    console.log("retreiving all projects")
+    allProjects.push(...tempStorage)
+    console.table(allProjects)
+}
 
-allProjects.push(inbox);
-allProjects.push(chores);
-
-console.log(allProjects)
 
 // Get header for current project and insert name to DOM
 const getCurrentProjectHeader = document.querySelector("#current_project");
-getCurrentProjectHeader.textContent = inbox.name;
+getCurrentProjectHeader.textContent = allProjects[0].name;
+renderTodos(allProjects[0])
 
 // Get all project name section container
 const getProjectNameSectionContainer = document.querySelector("#project_names")
@@ -78,8 +90,11 @@ function renderTodos(project) {
             
             const newCompleted = document.createElement("button");
             newCompleted.textContent = "Mark completed"
+
+            const newDelete = document.createElement("button");
+            newDelete.textContent = "Delete"
     
-            newListItem.append(newTitle, newDesc, newDueDate, newCompleted)
+            newListItem.append(newTitle, newDesc, newDueDate, newCompleted, newDelete)
             content.appendChild(newListItem);
         });
 
@@ -110,6 +125,8 @@ function btn() {
         getPriority.value = "low";
 
         todoManager.add(currentProjectObj, newTodo);
+        storageManager.save("localData", allProjects);
+        console.table(allProjects);
         renderTodos(currentProjectObj);
     })
 } 
@@ -131,6 +148,7 @@ function createNewProject(e) {
     getNewProjectName.value = '';
     getFormDialog.close();
 
+    // Add project to working memory
     allProjects.push(newProject)
 
     const newProjectButton = document.createElement("button");
@@ -138,7 +156,10 @@ function createNewProject(e) {
     newProjectButton.textContent = newProject.name;
     getProjectNameSectionContainer.appendChild(newProjectButton);
 
-    console.table(allProjects)
+    // Save project to localStorage
+
+    storageManager.save("localData", allProjects);
+    console.table(allProjects);
 
 }
 
