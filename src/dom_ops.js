@@ -36,25 +36,37 @@ renderProjectNames()
 // Show all todos and content
 function renderTodos(project) {
         content.innerHTML = ""; // clear old list
-        // console.table(project)
+        console.table(project)
 
         project.todos.forEach(todo => {
             const newListItem = document.createElement("li");
 
+            let setPriority = "";
+            if (todo.priority === 'low') {
+                setPriority = "!"
+            } else if (todo.priority === 'medium') {
+                setPriority = "!!"
+            } else if (todo.priority === 'high') {
+                setPriority = "!!!"
+            }
+
             const newTitle = document.createElement("p");
-            newTitle.textContent = todo.title;
+            newTitle.textContent = todo.title + " (" + setPriority + ")";
     
             const newDesc = document.createElement("span");
             newDesc.textContent = todo.description;
     
-            let newDueDate = null;
-            if (todo.dueDate !== null) {
+            // console.log(todo.dueDate)
+            let newDueDate = document.createElement("subtitle");
+            if (todo.dueDate === '') {
+                // console.log("its null")
+                newDueDate.textContent = 'No due date';
+            } else {
                 const currentDate = new Date();
                 const comparingDate = compareAsc(todo.dueDate, currentDate)
                 console.log(comparingDate)
                 let formatDateTime = format(todo.dueDate, 'PPPP');
                 let dueIn = formatDistanceToNow(todo.dueDate);
-                newDueDate = document.createElement("subtitle");
                 
                 if (comparingDate === -1) {
                     newDueDate.textContent = "Overdue " + dueIn + " ago on " + formatDateTime;
@@ -62,14 +74,12 @@ function renderTodos(project) {
                     newDueDate.textContent = "Due in " + dueIn + " on " + formatDateTime;
                 }
             }
-    
-            const newPriority = document.createElement("span");
-            newPriority.textContent = todo.priority;
+
             
             const newCompleted = document.createElement("button");
             newCompleted.textContent = "Mark completed"
     
-            newListItem.append(newTitle, newDesc, newDueDate, newPriority, newCompleted)
+            newListItem.append(newTitle, newDesc, newDueDate, newCompleted)
             content.appendChild(newListItem);
         });
 
