@@ -1,6 +1,7 @@
 import { saveTodoButton, content, getTitle, getDesc, getDueDate, getPriority } from "./modules/dom_interface";
 import Todo from "./modules/todo_constructor"
 import { todoManager, allProjects } from "./todo_manager";
+import { format, formatDistanceToNow, compareAsc } from "date-fns";
 
 
 // Initialize default project
@@ -46,8 +47,21 @@ function renderTodos(project) {
             const newDesc = document.createElement("span");
             newDesc.textContent = todo.description;
     
-            const newDueDate = document.createElement("subtitle");
-            newDueDate.textContent = todo.dueDate;
+            let newDueDate = null;
+            if (todo.dueDate !== null) {
+                const currentDate = new Date();
+                const comparingDate = compareAsc(todo.dueDate, currentDate)
+                console.log(comparingDate)
+                let formatDateTime = format(todo.dueDate, 'PPPP');
+                let dueIn = formatDistanceToNow(todo.dueDate);
+                newDueDate = document.createElement("subtitle");
+                
+                if (comparingDate === -1) {
+                    newDueDate.textContent = "Overdue " + dueIn + " ago on " + formatDateTime;
+                } else if (comparingDate === 1) {
+                    newDueDate.textContent = "Due in " + dueIn + " on " + formatDateTime;
+                }
+            }
     
             const newPriority = document.createElement("span");
             newPriority.textContent = todo.priority;
