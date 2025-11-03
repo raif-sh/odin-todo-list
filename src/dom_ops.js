@@ -99,15 +99,49 @@ function renderTodos(project) {
             // const newCompleted = document.createElement("button");
             // newCompleted.textContent = "Mark completed";
 
-            const newEdit= document.createElement("button");
-            newEdit.textContent = "Edit";
+            // const newEdit= document.createElement("button");
+            // newEdit.textContent = "...";
 
-            const newDelete = document.createElement("button");
-            newDelete.textContent = "Delete";
+            // const newDelete = document.createElement("svg");
+            // The required SVG namespace
+            const svgNS = "http://www.w3.org/2000/svg";
+
+            // 1. Create the main <svg> element using the namespace
+            const newEdit = document.createElementNS(svgNS, "svg");
+            const newDelete = document.createElementNS(svgNS, "svg");
+
+            // 2. Set the attributes for the <svg> element
+            newDelete.setAttribute("xmlns", svgNS);
+            newDelete.setAttribute("viewBox", "0 0 24 24");
+            newDelete.setAttribute("class", "svg-icon-style"); 
+
+            newEdit.setAttribute("xmlns", svgNS);
+            newEdit.setAttribute("viewBox", "0 0 24 24");
+            newEdit.setAttribute("class", "svg-icon-style"); 
+
+            // 3. Create the <path> child element using the namespace
+            const pathElementForDelete = document.createElementNS(svgNS, "path");
+
+            // 4. Set the attributes for the <path> element
+            pathElementForDelete.setAttribute("fill-rule", "evenodd");
+            pathElementForDelete.setAttribute("d", "M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z");
+            pathElementForDelete.setAttribute("clip-rule", "evenodd");
+
+            // 4. Set the attributes for the edit element
+            const pathElementForEdit = document.createElementNS(svgNS, "path");
+
+            // 4. Set the attributes for the edit element
+            pathElementForEdit.setAttribute("fill-rule", "evenodd");
+            pathElementForEdit.setAttribute("d", "M4.5 12a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z");
+            pathElementForEdit.setAttribute("clip-rule", "evenodd");
+
+            // 5. Append the path element to the svg element
+            newDelete.appendChild(pathElementForDelete);
+            newEdit.appendChild(pathElementForEdit);
 
             // label element is a container for action items
-            const newLabel = document.createElement("label");
-            newLabel.classList = "form-control";
+            const newCheckboxContainer = document.createElement("label");
+            newCheckboxContainer.classList = "form-control";
 
             // Create checkbox
             const newCheckbox = document.createElement("input");
@@ -115,14 +149,18 @@ function renderTodos(project) {
             newCheckbox.classList = 'checkbox-style';
             newCheckbox.name = "checkbox"
 
+            // Create edit menu button
+            // const newThreedots = document.querySelector("button")
+            // newThreedots.textContent = '...'
+
             if (todo.completed === true) {
                 newCheckbox.checked = true;
             }
 
-            newLabel.appendChild(newCheckbox);
+            newCheckboxContainer.appendChild(newCheckbox);
 
-            newListItemAction.append(newId, newEdit, newDelete)
-            newListItem.append(newLabel, newTitle, newDesc, newDueDate, newListItemAction)
+            newListItemAction.append(newId, newCheckboxContainer,newEdit)
+            newListItem.append(newListItemAction, newTitle, newDesc, newDueDate)
             content.appendChild(newListItem);
         });
 
@@ -223,20 +261,20 @@ getContentContainer.addEventListener("click", (e) => {
     // check if click was to a valid button, and determine request type
     let actionType = null;
     let parentElement = null;
-    if (e.target.matches('button')) {
-        actionType = e.target.textContent;
+    if (e.target.matches('svg')) {
+        actionType = 'Edit';
         // Grab parent element of button
         parentElement = e.target.parentElement;
-        // console.log(parentElement)
+        console.log(parentElement)
     // check for completion checkbox clicck
     } else if (e.target.matches('input[type="checkbox"]')) {
         actionType = "Mark completed"
         // Grab grand parent element of checkbox
-        parentElement = e.target.parentElement.parentElement;
+        parentElement = e.target.parentElement.parentElement.parentElement;
         // console.log(parentElement)
     } else {
-        console.log(e.target)
-        // console.log("not a button!!!")
+        // console.log(e.target)
+        console.log("not a button!!!")
         return
     }
 
@@ -255,17 +293,22 @@ getContentContainer.addEventListener("click", (e) => {
     const currentProjectObj = todoManager.findProject(getCurrentProjectHeader.textContent)
 
     if (actionType === 'Mark completed') {
-        console.log("Updating todo to be marked as completed or erasing completed checkmark");
+        // console.log("Updating todo to be marked as completed or erasing completed checkmark");
         todoManager.updateCompleted(currentProjectObj, selectedId)
         storageManager.save("localData", allProjects);
         console.table(allProjects);
     } else if (actionType === 'Edit') {
+        getItemEditModal.showModal();
         console.log("Opening edit options");
 
     } else if (actionType === 'Delete') {
         console.log("Deleting this todo");
     }
 })
+
+// Editing existing item on modal
+const getItemEditModal = document.querySelector("#todoItemDialog");
+
 
 
 export { btn };

@@ -346,3 +346,14 @@ form select:focus {
 .form-control + .form-control {
   margin-top: 1em;
 }
+
+.svg-icon-style {
+  fill: rgb(99, 99, 99);
+  width: 24px;
+  height: auto;
+}
+
+.svg-icon-style:hover {
+  fill: rgb(164, 164, 164);
+  cursor: pointer;
+}
