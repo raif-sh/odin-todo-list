@@ -234,8 +234,7 @@ form select:focus {
   margin-top: 2rem;
 }
 
-#content li {
-  list-style: none;
+#content .todo-item {
   background: #1c1c1c;
   border: 1px solid #333;
   border-radius: 8px;
@@ -246,34 +245,39 @@ form select:focus {
   transition: background 0.2s ease;
 }
 
-#content li:hover {
+#content .todo-item:hover {
   background: #242424;
 }
 
-#content li p {
+#content .todo-item p {
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
 }
 
-#content li span {
+#content .todo-item span {
   font-size: 0.9rem;
   color: #bbb;
 }
 
-#content li subtitle {
+#content .todo-item subtitle {
   font-size: 0.8rem;
   color: #999;
 }
 
 /* Priority highlight */
-#content li span:last-of-type {
+#content .todo-item span:last-of-type {
   color: #ffb347;
   font-weight: 500;
 }
 
-/* Completed button */
-#content li button {
+/* Actions buttons */
+#content .todo-action {
+  display: flex;
+  justify-content: space-between;
+}
+
+#content .todo-action button {
   align-self: flex-start;
   background: #444;
   color: #fff;
@@ -285,6 +289,60 @@ form select:focus {
   transition: background 0.2s ease;
 }
 
-#content li button:hover {
+#content .todo-action button:hover {
   background: #666;
+}
+
+#content .form-control {
+  font-family: system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1.1;
+  /* grid layout */
+  display: grid;
+  grid-template-columns: 1em auto;
+  gap: 0.5em;
+}
+
+#content input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  /* For iOS < 15 to remove gradient background */
+  background-color: #3a3a3a;
+  /* Not removed via appearance */
+  margin: 0;
+  /* consutom unchcked style */
+  font: inherit;
+  color: #3a3a3a;
+  width: 1em;
+  height: 1em;
+  border: 0.15em solid #3a3a3a;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
+  display: grid;
+  place-content: center;
+}
+
+#content input[type="checkbox"]::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  transform: scale(0);
+  transition: 120mx transform ease-in-out;
+  box-shadow: inset 1em 1em greenyellow;
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+#content input[type="checkbox"]:hover {
+  background-color: #565656;
+  border: 0.15em solid #565656;
+}
+
+#content input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+.form-control + .form-control {
+  margin-top: 1em;
 }

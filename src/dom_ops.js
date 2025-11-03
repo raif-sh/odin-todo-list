@@ -18,9 +18,9 @@ if (storageManager.read("localData") === null) {
 } else {
     // sync existing data to allProjects
     let tempStorage = storageManager.read("localData");
-    console.log("retreiving all projects")
+    // console.log("retreiving all projects")
     allProjects.push(...tempStorage)
-    console.table(allProjects)
+    // console.table(allProjects)
 }
 
 
@@ -48,10 +48,14 @@ renderProjectNames()
 // Show all todos and content
 function renderTodos(project) {
         content.innerHTML = ""; // clear old list
-        console.table(project)
+        // console.table(project)
 
         project.todos.forEach(todo => {
-            const newListItem = document.createElement("li");
+            const newListItem = document.createElement("div");
+            newListItem.className = "todo-item";
+
+            const newListItemAction = document.createElement("div");
+            newListItemAction.className = "todo-action";
 
             let setPriority = "";
             if (todo.priority === 'low') {
@@ -65,7 +69,7 @@ function renderTodos(project) {
             const newTitle = document.createElement("p");
             newTitle.textContent = todo.title + " (" + setPriority + ")";
     
-            const newDesc = document.createElement("span");
+            const newDesc = document.createElement("p");
             newDesc.textContent = todo.description;
     
             // console.log(todo.dueDate)
@@ -76,7 +80,7 @@ function renderTodos(project) {
             } else {
                 const currentDate = new Date();
                 const comparingDate = compareAsc(todo.dueDate, currentDate)
-                console.log(comparingDate)
+                // console.log(comparingDate)
                 let formatDateTime = format(todo.dueDate, 'PPPP');
                 let dueIn = formatDistanceToNow(todo.dueDate);
                 
@@ -87,14 +91,38 @@ function renderTodos(project) {
                 }
             }
 
+            const newId = document.createElement("span");
+            newId.hidden = true;
+            newId.className = 'target-span-id';
+            newId.textContent = todo.id;
             
-            const newCompleted = document.createElement("button");
-            newCompleted.textContent = "Mark completed"
+            // const newCompleted = document.createElement("button");
+            // newCompleted.textContent = "Mark completed";
+
+            const newEdit= document.createElement("button");
+            newEdit.textContent = "Edit";
 
             const newDelete = document.createElement("button");
-            newDelete.textContent = "Delete"
-    
-            newListItem.append(newTitle, newDesc, newDueDate, newCompleted, newDelete)
+            newDelete.textContent = "Delete";
+
+            // label element is a container for action items
+            const newLabel = document.createElement("label");
+            newLabel.classList = "form-control";
+
+            // Create checkbox
+            const newCheckbox = document.createElement("input");
+            newCheckbox.type = 'checkbox';
+            newCheckbox.classList = 'checkbox-style';
+            newCheckbox.name = "checkbox"
+
+            if (todo.completed === true) {
+                newCheckbox.checked = true;
+            }
+
+            newLabel.appendChild(newCheckbox);
+
+            newListItemAction.append(newId, newEdit, newDelete)
+            newListItem.append(newLabel, newTitle, newDesc, newDueDate, newListItemAction)
             content.appendChild(newListItem);
         });
 
@@ -186,6 +214,57 @@ getProjectNameSectionContainer.addEventListener("click", (e) => {
 
     renderTodos(currentProjectObj);
 
+})
+
+// Select content container to pick up todo-specific button clicks
+const getContentContainer = document.querySelector("#content");
+
+getContentContainer.addEventListener("click", (e) => {
+    // check if click was to a valid button, and determine request type
+    let actionType = null;
+    let parentElement = null;
+    if (e.target.matches('button')) {
+        actionType = e.target.textContent;
+        // Grab parent element of button
+        parentElement = e.target.parentElement;
+        // console.log(parentElement)
+    // check for completion checkbox clicck
+    } else if (e.target.matches('input[type="checkbox"]')) {
+        actionType = "Mark completed"
+        // Grab grand parent element of checkbox
+        parentElement = e.target.parentElement.parentElement;
+        // console.log(parentElement)
+    } else {
+        console.log(e.target)
+        // console.log("not a button!!!")
+        return
+    }
+
+
+    // Select the span element within the parent using its class
+    const spanElement = parentElement.querySelector('.target-span-id');
+
+    let selectedId = null;
+    // Get the todo id from the span
+    if (spanElement) {
+        selectedId = spanElement.textContent;
+        console.log(selectedId); 
+    }
+
+    // find current active project name
+    const currentProjectObj = todoManager.findProject(getCurrentProjectHeader.textContent)
+
+    if (actionType === 'Mark completed') {
+        console.log("Updating todo to be marked as completed or erasing completed checkmark");
+        todoManager.updateCompleted(currentProjectObj, selectedId)
+        storageManager.save("localData", allProjects);
+        console.table(allProjects);
+    } else if (actionType === 'Edit') {
+        console.log("Opening edit options");
+
+    } else if (actionType === 'Delete') {
+        console.log("Deleting this todo");
+    }
 })
 
 
