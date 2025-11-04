@@ -25,12 +25,29 @@
     </dialog>
     <dialog id="todoItemDialog">
         <div class="dialog-container">
+            <h2>Editing Task</h2>
             <p>
-                <h2 for="projectItemTitle">Editing Task</h2>
-                <input required type="text" name="projectItemTitle" id="projectItemTitle" placeholder="This can't be blank">
+                <label for="editItemTitle">Task name</label>
+                <input required type="text" name="editItemTitle" id="editItemTitle" placeholder="This can't be blank">
+            </p>
+            <p>
+                <label for="editdescription">Description</label>
+                <input type="text" autocomplete="off" name="editdescription" id="editdescription">
+            </p>
+            <p>
+                <label for="editDueDate">Due Date</label>
+                <input type="datetime-local" name="editDueDate" id="editDueDate">
+            </p>
+            <p>
+                <label for="editPriority">Priority</label>
+                <select name="editPriority" id="editPriority">
+                    <option value="low">! Low</option>
+                    <option value="medium">!! Medium</option>
+                    <option value="high">!!! High</option>
+                </select>
             </p>
             <form action="#" method="dialog">
-                <button id="editProjectItem">Add new projects</button>
+                <button id="editProjectItem">Save</button>
                 <button>Close</button>
                 <button>Delete</button>
             </form>

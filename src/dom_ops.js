@@ -48,7 +48,7 @@ renderProjectNames()
 // Show all todos and content
 function renderTodos(project) {
         content.innerHTML = ""; // clear old list
-        // console.table(project)
+        console.table(project)
 
         project.todos.forEach(todo => {
             const newListItem = document.createElement("div");
@@ -57,7 +57,12 @@ function renderTodos(project) {
             const newListItemAction = document.createElement("div");
             newListItemAction.className = "todo-action";
 
-            let setPriority = "";
+            const newPriority = document.createElement("subtitle");
+            newPriority.hidden = true;
+            newPriority.classList = "target-priority";
+            newPriority.textContent = todo.priority;
+
+            let setPriority = ''
             if (todo.priority === 'low') {
                 setPriority = "!"
             } else if (todo.priority === 'medium') {
@@ -67,16 +72,24 @@ function renderTodos(project) {
             }
 
             const newTitle = document.createElement("p");
+            newTitle.classList = "target-title";
             newTitle.textContent = todo.title + " (" + setPriority + ")";
+            // setPriority.hidden = true;
     
             const newDesc = document.createElement("p");
+            newDesc.classList = "target-desc";
             newDesc.textContent = todo.description;
     
             // console.log(todo.dueDate)
+            let newDueDateHidden = document.createElement("subtitle");
+            newDueDateHidden.hidden = true;
+            newDueDateHidden.textContent = todo.dueDate;
+            newDueDateHidden.classList = "target-duedate-hidden"
+
             let newDueDate = document.createElement("subtitle");
             if (todo.dueDate === '') {
                 // console.log("its null")
-                newDueDate.textContent = 'No due date';
+                newDueDate.textContent = null;
             } else {
                 const currentDate = new Date();
                 const comparingDate = compareAsc(todo.dueDate, currentDate)
@@ -160,7 +173,7 @@ function renderTodos(project) {
             newCheckboxContainer.appendChild(newCheckbox);
 
             newListItemAction.append(newId, newCheckboxContainer,newEdit)
-            newListItem.append(newListItemAction, newTitle, newDesc, newDueDate)
+            newListItem.append(newListItemAction, newTitle, newDesc, newDueDate, newDueDateHidden, newPriority)
             content.appendChild(newListItem);
         });
 
@@ -257,20 +270,27 @@ getProjectNameSectionContainer.addEventListener("click", (e) => {
 // Select content container to pick up todo-specific button clicks
 const getContentContainer = document.querySelector("#content");
 
+// Select ids for edit modal
+const getEditItemTitle = document.querySelector("#editItemTitle");
+const getEditdescription = document.querySelector("#editdescription");
+const getEditDueDate = document.querySelector("#editDueDate");
+const getEditPriority = document.querySelector("#editPriority");
+const getSubmitEditProjectItem = document.querySelector("#editProjectItem");
+
 getContentContainer.addEventListener("click", (e) => {
     // check if click was to a valid button, and determine request type
     let actionType = null;
-    let parentElement = null;
+    let getParentElementOfId = null;
     if (e.target.matches('svg')) {
         actionType = 'Edit';
         // Grab parent element of button
-        parentElement = e.target.parentElement;
-        console.log(parentElement)
+        getParentElementOfId = e.target.parentElement;
+        console.log(getParentElementOfId)
     // check for completion checkbox clicck
     } else if (e.target.matches('input[type="checkbox"]')) {
         actionType = "Mark completed"
         // Grab grand parent element of checkbox
-        parentElement = e.target.parentElement.parentElement.parentElement;
+        getParentElementOfId = e.target.parentElement.parentElement.parentElement;
         // console.log(parentElement)
     } else {
         // console.log(e.target)
@@ -280,7 +300,7 @@ getContentContainer.addEventListener("click", (e) => {
 
 
     // Select the span element within the parent using its class
-    const spanElement = parentElement.querySelector('.target-span-id');
+    const spanElement = getParentElementOfId.querySelector('.target-span-id');
 
     let selectedId = null;
     // Get the todo id from the span
@@ -292,14 +312,38 @@ getContentContainer.addEventListener("click", (e) => {
     // find current active project name
     const currentProjectObj = todoManager.findProject(getCurrentProjectHeader.textContent)
 
+    // Execute request based on action type
     if (actionType === 'Mark completed') {
         // console.log("Updating todo to be marked as completed or erasing completed checkmark");
         todoManager.updateCompleted(currentProjectObj, selectedId)
         storageManager.save("localData", allProjects);
         console.table(allProjects);
     } else if (actionType === 'Edit') {
-        getItemEditModal.showModal();
         console.log("Opening edit options");
+        // Get current item container
+        const itemContainer = e.target.parentElement.parentElement;
+        const todoItem = storageManager.read("localData");
+        console.log(todoItem)
+        console.log(currentProjectObj)
+        // Pick each item data from container
+        const editTitle = itemContainer.querySelector(".target-title")
+        const editDesc= itemContainer.querySelector(".target-desc")
+        const editDuedate = itemContainer.querySelector(".target-duedate-hidden")
+        const editPriority = itemContainer.querySelector(".target-priority")
+        // console.log(itemContainer);
+        // assign values to modal inputs from DOM elements
+        getEditItemTitle.value = editTitle.textContent;
+        getEditdescription.value = editDesc.textContent;
+        getEditDueDate.value = editDuedate.textContent;
+        getEditPriority.value = editPriority.textContent;
+        // Show modal with data
+        getItemEditModal.showModal();
+        getSubmitEditProjectItem.addEventListener("click", function() {
+            // console.log(itemContainer)
+            todoManager.updateTitle(currentProjectObj, selectedId, getEditItemTitle.value)
+            storageManager.save("localData", allProjects);
+
+        })
 
     } else if (actionType === 'Delete') {
         console.log("Deleting this todo");

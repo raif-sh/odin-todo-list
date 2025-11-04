@@ -30,6 +30,17 @@ const todoManager = {
         
         return project.todos[index].completed = !project.todos[index].completed;
     },
+    updateTitle(project, todoId, newTitle) {
+        const index = project.todos.findIndex(item => item.id === todoId);
+        if (index === -1) {
+            console.warn(`Todo with id "${todoId}" not found.`);
+            return false;
+        }
+        
+        console.log("updating: " + project.todos[index].title + " to " + newTitle)
+        project.todos[index].title = newTitle;
+        return
+    },
     findProject(name) {
         // Get index of project by searching for matching name
         const foundProject = allProjects.findIndex(obj => obj.name === name);
