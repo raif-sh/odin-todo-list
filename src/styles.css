@@ -249,19 +249,24 @@ form select:focus {
   background: #242424;
 }
 
-#content .todo-item p {
+#content .todo-item h3 {
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
 }
 
-#content .todo-item span {
+#content .todo-item p {
   font-size: 0.9rem;
+  color: #ccc;
+}
+
+#content .todo-item span {
+  font-size: 0.8rem;
   color: #bbb;
 }
 
 #content .todo-item subtitle {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #999;
 }
 

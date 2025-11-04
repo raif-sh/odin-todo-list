@@ -30,15 +30,18 @@ const todoManager = {
         
         return project.todos[index].completed = !project.todos[index].completed;
     },
-    updateTitle(project, todoId, newTitle) {
+    updateTask(project, todoId, newTitle, newDesc, newDueDate, newPriority) {
         const index = project.todos.findIndex(item => item.id === todoId);
         if (index === -1) {
             console.warn(`Todo with id "${todoId}" not found.`);
             return false;
         }
         
-        console.log("updating: " + project.todos[index].title + " to " + newTitle)
+        // console.log("updating: " + project.todos[index].title + " to " + newTitle)
         project.todos[index].title = newTitle;
+        project.todos[index].description = newDesc;
+        project.todos[index].dueDate = newDueDate;
+        project.todos[index].priority = newPriority;
         return
     },
     findProject(name) {
@@ -51,6 +54,16 @@ const todoManager = {
         } else {
             console.log("invalid project name")
         }
+    },
+    deleteItem(project, todoId) {
+        const index = project.todos.findIndex(item => item.id === todoId);
+        if (index === -1) {
+            console.warn(`Todo with id "${todoId}" not found.`);
+            return false;
+        } 
+        project.todos.splice(index, 1);
+
+        return
     }
 }
 

@@ -71,7 +71,7 @@ function renderTodos(project) {
                 setPriority = "!!!"
             }
 
-            const newTitle = document.createElement("p");
+            const newTitle = document.createElement("h3");
             newTitle.classList = "target-title";
             newTitle.textContent = todo.title + " (" + setPriority + ")";
             // setPriority.hidden = true;
@@ -276,6 +276,7 @@ const getEditdescription = document.querySelector("#editdescription");
 const getEditDueDate = document.querySelector("#editDueDate");
 const getEditPriority = document.querySelector("#editPriority");
 const getSubmitEditProjectItem = document.querySelector("#editProjectItem");
+const getDeleteItemBtn = document.querySelector("#deleteItem");
 
 getContentContainer.addEventListener("click", (e) => {
     // check if click was to a valid button, and determine request type
@@ -340,13 +341,19 @@ getContentContainer.addEventListener("click", (e) => {
         getItemEditModal.showModal();
         getSubmitEditProjectItem.addEventListener("click", function() {
             // console.log(itemContainer)
-            todoManager.updateTitle(currentProjectObj, selectedId, getEditItemTitle.value)
+            todoManager.updateTask(currentProjectObj, selectedId, getEditItemTitle.value, getEditdescription.value, getEditDueDate.value, getEditPriority.value)
             storageManager.save("localData", allProjects);
+            renderTodos(currentProjectObj)
 
         })
 
-    } else if (actionType === 'Delete') {
-        console.log("Deleting this todo");
+        getDeleteItemBtn.addEventListener("click", function() {
+            console.log("confimed! initiating delete of this todo")
+            todoManager.deleteItem(currentProjectObj, selectedId);
+            storageManager.save("localData", allProjects);
+            renderTodos(currentProjectObj)
+        })
+
     }
 })
 
